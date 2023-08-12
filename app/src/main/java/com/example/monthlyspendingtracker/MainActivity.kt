@@ -21,14 +21,23 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.room.Room
+import com.example.monthlyspendingtracker.data.AppDatabase
+import com.example.monthlyspendingtracker.data.ExpenseEntity
 import com.example.monthlyspendingtracker.ui.theme.MonthlySpendingTrackerTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.NumberFormat
+import java.util.Calendar
 import java.util.Currency
+import java.util.Date
 
 
 //enum class Category(val label: String, val icon: Unit) {
@@ -73,7 +82,22 @@ fun DefaultPreview() {
 @ExperimentalComposeUiApi
 @Composable
 fun MyApp() {
+    val database = Room.databaseBuilder(
+        LocalContext.current,
+        AppDatabase::class.java,
+        "expenses-db"
+    ).build()
+
+    // Initialize the running total with expenses from the current month
+    val currentMonth = Calendar.getInstance().apply {
+        set(Calendar.DAY_OF_MONTH, 1) // Set to the first day of the month
+    }.time
+
     var totalAmount by remember { mutableStateOf(0.0) }
+    CoroutineScope(Dispatchers.IO).launch {
+        totalAmount = database.expenseDao().getTotalAmountForMonth(currentMonth) ?: 0.0
+    }
+
     var purchaseAmount by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf(Category.DANIEL_FUN) }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -155,6 +179,13 @@ fun MyApp() {
             onClick = {
                 val amount = purchaseAmount.toDoubleOrNull() ?: 0.0
                 totalAmount += amount
+
+                // Create an Expense object and insert it into the database
+                val expense = ExpenseEntity(date = Date(), category = selectedCategory.label, price = amount)
+                CoroutineScope(Dispatchers.IO).launch {
+                    database.expenseDao().insertExpense(expense)
+                }
+
                 purchaseAmount = ""
                 selectedCategory = Category.DANIEL_FUN
                 keyboardController?.hide()

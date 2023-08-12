@@ -1,7 +1,10 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.devtools.ksp' version "$ksp_version"
 }
+
+apply plugin: 'kotlin-kapt'
 
 android {
     namespace 'com.example.monthlyspendingtracker'
@@ -47,6 +50,16 @@ android {
 }
 
 dependencies {
+    implementation 'androidx.room:room-common:2.5.2'
+    def room_version = "2.5.2"
+
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+
+    // To use Kotlin annotation processing tool (kapt)
+    kapt "androidx.room:room-compiler:$room_version"
+    // To use Kotlin Symbol Processing (KSP)
+    ksp "androidx.room:room-compiler:$room_version"
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
