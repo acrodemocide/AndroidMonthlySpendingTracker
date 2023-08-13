@@ -1,13 +1,5 @@
 package com.example.monthlyspendingtracker
 
-//import androidx.appcompat.app.AppCompatActivity
-//import androidx.compose.material.icons.Icons
-//import androidx.compose.material3.icons.Icons
-//import androidx.compose.material3.icons.Filled.Add
-//import androidx.compose.material3.icons.Filled.KeyboardArrowDown
-//import androidx.compose.material3.icons.Filled.Money
-//import androidx.compose.material3.icons.Filled.Timeline
-//import androidx.compose.material3.icons.filled.List
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -39,7 +31,6 @@ import java.text.NumberFormat
 import java.util.Calendar
 import java.util.Currency
 import java.util.Date
-
 
 //enum class Category(val label: String, val icon: Unit) {
 //    DANIEL_FUN("Daniel Fun", Icons.Default.Money),
@@ -95,9 +86,6 @@ fun MyApp() {
     }.time
 
     var totalAmount by remember { mutableStateOf(0.0) }
-//    LaunchedEffect(CoroutineScope.() => CoroutineScope(Dispatchers.IO).launch {
-//        totalAmount = database.expenseDao().getTotalAmountForMonth(currentMonth) ?: 0.0
-//    })
 
     LaunchedEffect(Unit) {
         val amountFromDb = withContext(Dispatchers.IO) {
