@@ -34,6 +34,7 @@ import com.example.monthlyspendingtracker.ui.theme.MonthlySpendingTrackerTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.NumberFormat
 import java.util.Calendar
 import java.util.Currency
@@ -94,8 +95,15 @@ fun MyApp() {
     }.time
 
     var totalAmount by remember { mutableStateOf(0.0) }
-    CoroutineScope(Dispatchers.IO).launch {
-        totalAmount = database.expenseDao().getTotalAmountForMonth(currentMonth) ?: 0.0
+//    LaunchedEffect(CoroutineScope.() => CoroutineScope(Dispatchers.IO).launch {
+//        totalAmount = database.expenseDao().getTotalAmountForMonth(currentMonth) ?: 0.0
+//    })
+
+    LaunchedEffect(Unit) {
+        val amountFromDb = withContext(Dispatchers.IO) {
+            database.expenseDao().getTotalAmountForMonth(currentMonth) ?: 0.0
+        }
+        totalAmount = amountFromDb
     }
 
     var purchaseAmount by remember { mutableStateOf("") }
