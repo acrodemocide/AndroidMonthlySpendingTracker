@@ -31,6 +31,7 @@ import java.text.NumberFormat
 import java.util.Calendar
 import java.util.Currency
 import java.util.Date
+import androidx.compose.material.ModalDrawer
 
 //enum class Category(val label: String, val icon: Unit) {
 //    DANIEL_FUN("Daniel Fun", Icons.Default.Money),
@@ -100,6 +101,35 @@ fun Drawer() {
             Text(text = "Drawer")
         }
     }
+}
+
+@Composable
+fun SpendingTrackerScaffold(
+    topBar: @Composable () -> Unit,
+    drawer: @Composable ColumnScope.() -> Unit,
+    content: @Composable () -> Unit
+) {
+    val drawerState =
+        androidx.compose.material.rememberDrawerState(androidx.compose.material.DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+
+    ModalDrawer(
+        drawerState = drawerState,
+        gesturesEnabled = drawerState.isOpen,
+        drawerContent = drawer,
+        content = {
+            Column {
+                topBar()
+                content()
+            }
+        }
+    )
+
+//    Scaffold(
+//        topBar = { topBar() },
+//        drawerContent = { drawer() },
+//        content = { content() }
+//    )
 }
 
 @ExperimentalComposeUiApi

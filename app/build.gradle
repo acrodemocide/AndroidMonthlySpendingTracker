@@ -8,7 +8,7 @@ apply plugin: 'kotlin-kapt'
 
 android {
     namespace 'com.example.monthlyspendingtracker'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.example.monthlyspendingtracker"
@@ -61,6 +61,7 @@ dependencies {
     // To use Kotlin Symbol Processing (KSP)
     ksp "androidx.room:room-compiler:$room_version"
 
+    implementation "androidx.compose.material:material:1.5.0"
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
     implementation 'androidx.activity:activity-compose:1.3.1'
