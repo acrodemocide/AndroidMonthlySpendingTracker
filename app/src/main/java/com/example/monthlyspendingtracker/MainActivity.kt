@@ -98,7 +98,6 @@ fun Drawer() {
     ) {
         repeat(5) { item ->
             Text(text = "Item $item", color = Color.Black)
-            Text(text = "Drawer")
         }
     }
 }
@@ -166,7 +165,6 @@ fun MyApp() {
     format.currency = Currency.getInstance("USD")
 
     SpendingTrackerScaffold {
-//        Content(database, totalAmount, purchaseAmount, selectedCategory, keyboardController, format)
         Column(
             modifier = Modifier
                 .fillMaxSize()
