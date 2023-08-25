@@ -106,17 +106,16 @@ fun Drawer() {
 @Composable
 fun SpendingTrackerScaffold(
     topBar: @Composable () -> Unit,
-    drawer: @Composable ColumnScope.() -> Unit,
     content: @Composable () -> Unit
 ) {
     val drawerState =
         androidx.compose.material.rememberDrawerState(androidx.compose.material.DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
+//    val scope = rememberCoroutineScope()
 
     ModalDrawer(
         drawerState = drawerState,
         gesturesEnabled = drawerState.isOpen,
-        drawerContent = drawer,
+        drawerContent = {Drawer()},
         content = {
             Column {
                 topBar()
@@ -124,12 +123,6 @@ fun SpendingTrackerScaffold(
             }
         }
     )
-
-//    Scaffold(
-//        topBar = { topBar() },
-//        drawerContent = { drawer() },
-//        content = { content() }
-//    )
 }
 
 @ExperimentalComposeUiApi
