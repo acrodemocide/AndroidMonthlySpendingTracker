@@ -148,7 +148,7 @@ fun MyApp() {
         set(Calendar.DAY_OF_MONTH, 1) // Set to the first day of the month
     }.time
 
-    var totalAmount by remember { mutableStateOf(0.0) }
+    var totalAmount by remember { mutableDoubleStateOf(0.0) }
 
     LaunchedEffect(Unit) {
         val amountFromDb = withContext(Dispatchers.IO) {
@@ -165,92 +165,95 @@ fun MyApp() {
     format.maximumFractionDigits = 2
     format.currency = Currency.getInstance("USD")
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        // Display running total
-        Text(
-            text = "${format.format(totalAmount)}",
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(16.dp)
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Text box to enter purchase amount
-        OutlinedTextField(
-            value = purchaseAmount,
-            onValueChange = { purchaseAmount = it },
-            label = { Text("Enter purchase price (USD)") },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            leadingIcon = { Icon(painterResource(R.drawable.ic_baseline_attach_money_24), contentDescription = null) },
-            modifier = Modifier.fillMaxWidth(),
-            colors = OutlinedTextFieldDefaults.colors(focusedTextColor = Color.Black, unfocusedTextColor = Color.Black)
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Dropdown menu for categories
-        var expanded by remember { mutableStateOf(false) }
-        OutlinedTextField(
-            value = selectedCategory.label,
-            onValueChange = {},
-            label = { Text("Category") },
-            trailingIcon = {
-                Icon(
-                    painterResource(R.drawable.ic_baseline_keyboard_arrow_down_24),
-                    contentDescription = null,
-                    modifier = Modifier.clickable { expanded = true }
-                )
-            },
-            readOnly = true,
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
+    SpendingTrackerScaffold {
+//        Content(database, totalAmount, purchaseAmount, selectedCategory, keyboardController, format)
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .onFocusChanged { if (it.isFocused) expanded = true },
-            colors = OutlinedTextFieldDefaults.colors(focusedTextColor = Color.Black, unfocusedTextColor = Color.Black)
-        )
-
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier.fillMaxWidth()
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            for (category in Category.values()) {
-                DropdownMenuItem(
-                    text= { Text(category.label) },
-                    onClick = {
-                        selectedCategory = category
-                        expanded = false
-                    },
-                )
-            }
-        }
+            // Display running total
+            Text(
+                text = "${format.format(totalAmount)}",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(16.dp)
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        // Submit button
-        IconButton(
-            onClick = {
-                val amount = purchaseAmount.toDoubleOrNull() ?: 0.0
-                totalAmount += amount
+            // Text box to enter purchase amount
+            OutlinedTextField(
+                value = purchaseAmount,
+                onValueChange = { purchaseAmount = it },
+                label = { Text("Enter purchase price (USD)") },
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                leadingIcon = { Icon(painterResource(R.drawable.ic_baseline_attach_money_24), contentDescription = null) },
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(focusedTextColor = Color.Black, unfocusedTextColor = Color.Black)
+            )
 
-                // Create an Expense object and insert it into the database
-                val expense = ExpenseEntity(date = Date(), category = selectedCategory.label, price = amount)
-                CoroutineScope(Dispatchers.IO).launch {
-                    database.expenseDao().insertExpense(expense)
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Dropdown menu for categories
+            var expanded by remember { mutableStateOf(false) }
+            OutlinedTextField(
+                value = selectedCategory.label,
+                onValueChange = {},
+                label = { Text("Category") },
+                trailingIcon = {
+                    Icon(
+                        painterResource(R.drawable.ic_baseline_keyboard_arrow_down_24),
+                        contentDescription = null,
+                        modifier = Modifier.clickable { expanded = true }
+                    )
+                },
+                readOnly = true,
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onFocusChanged { if (it.isFocused) expanded = true },
+                colors = OutlinedTextFieldDefaults.colors(focusedTextColor = Color.Black, unfocusedTextColor = Color.Black)
+            )
+
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                for (category in Category.values()) {
+                    DropdownMenuItem(
+                        text= { Text(category.label) },
+                        onClick = {
+                            selectedCategory = category
+                            expanded = false
+                        },
+                    )
                 }
-
-                purchaseAmount = ""
-                selectedCategory = Category.DANIEL_FUN
-                keyboardController?.hide()
             }
-        ) {
-            Icon(painterResource(R.drawable.ic_baseline_add_24), contentDescription = null)
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Submit button
+            IconButton(
+                onClick = {
+                    val amount = purchaseAmount.toDoubleOrNull() ?: 0.0
+                    totalAmount += amount
+
+                    // Create an Expense object and insert it into the database
+                    val expense = ExpenseEntity(date = Date(), category = selectedCategory.label, price = amount)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        database.expenseDao().insertExpense(expense)
+                    }
+
+                    purchaseAmount = ""
+                    selectedCategory = Category.DANIEL_FUN
+                    keyboardController?.hide()
+                }
+            ) {
+                Icon(painterResource(R.drawable.ic_baseline_add_24), contentDescription = null)
+            }
         }
     }
 }
