@@ -105,12 +105,11 @@ fun Drawer() {
 
 @Composable
 fun SpendingTrackerScaffold(
-    topBar: @Composable () -> Unit,
     content: @Composable () -> Unit
 ) {
     val drawerState =
         androidx.compose.material.rememberDrawerState(androidx.compose.material.DrawerValue.Closed)
-//    val scope = rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
 
     ModalDrawer(
         drawerState = drawerState,
@@ -118,7 +117,17 @@ fun SpendingTrackerScaffold(
         drawerContent = {Drawer()},
         content = {
             Column {
-                topBar()
+                TopBar(
+                    onMenuClick = {
+                        scope.launch {
+                            if (drawerState.isOpen) {
+                                drawerState.close()
+                            } else {
+                                drawerState.open()
+                            }
+                        }
+                    }
+                )
                 content()
             }
         }
