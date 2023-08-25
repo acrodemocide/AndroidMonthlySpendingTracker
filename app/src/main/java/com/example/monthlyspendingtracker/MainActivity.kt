@@ -71,6 +71,37 @@ fun DefaultPreview() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopBar(onMenuClick: () -> Unit) {
+    TopAppBar(
+        title = { Text(text = "Monthly Spending Tracker") },
+        navigationIcon = {
+            IconButton(onClick = onMenuClick) {
+                Icon(painterResource(R.drawable.baseline_menu_24), contentDescription = null)
+            }
+        },
+        // background color of topAppBar (cannot find "backgroundColor" -- not sure what to do here)
+//        backgroundColor = Color(0xFF0F9D58)
+    )
+}
+
+@Composable
+fun Drawer() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        repeat(5) { item ->
+            Text(text = "Item $item", color = Color.Black)
+            Text(text = "Drawer")
+        }
+    }
+}
+
 @ExperimentalComposeUiApi
 @Composable
 fun MyApp() {
