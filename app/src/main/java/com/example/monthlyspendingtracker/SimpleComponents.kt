@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.ModalDrawer
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
@@ -31,6 +32,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
@@ -51,6 +53,9 @@ fun TopBar(onMenuClick: () -> Unit) {
     )
 }
 
+class DrawerItem(val name: String, val icon: ImageVector) {
+}
+
 @Composable
 fun SpendingTrackerScaffold(
     content: @Composable () -> Unit
@@ -58,8 +63,7 @@ fun SpendingTrackerScaffold(
     val drawerState =
         androidx.compose.material3.rememberDrawerState(androidx.compose.material3.DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    // icons to mimic drawer destinations
-    val items = listOf(Icons.Default.Home, Icons.Default.Info, Icons.Default.Settings)
+    val items = listOf(DrawerItem("Home", Icons.Default.Home), DrawerItem("Edit History", Icons.Default.Edit), DrawerItem("Settings", Icons.Default.Settings))
     val selectedItem = remember { mutableStateOf(items[0]) }
 
     ModalNavigationDrawer(
@@ -69,7 +73,7 @@ fun SpendingTrackerScaffold(
                 Spacer(Modifier.height(12.dp))
                 items.forEach { item ->
                     NavigationDrawerItem(
-                        icon = { Icon(item, contentDescription = null) },
+                        icon = { Icon(item.icon, contentDescription = null) },
                         label = { Text(item.name) },
                         selected = item == selectedItem.value,
                         onClick = {
