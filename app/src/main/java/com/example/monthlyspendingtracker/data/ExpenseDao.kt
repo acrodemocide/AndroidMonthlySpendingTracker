@@ -15,6 +15,6 @@ interface ExpenseDao {
     @Query("SELECT SUM(price) FROM expenses WHERE date >= :startOfMonth")
     fun getTotalAmountForMonth(startOfMonth: Date): Double?
 
-    @Query("SELECT * FROM expenses WHERE date >= :startOfMonth")
+    @Query("SELECT * FROM expenses WHERE date >= :startOfMonth ORDER BY date DESC")
     fun getExpensesForMonth(startOfMonth: Date): List<ExpenseEntity>
 }
