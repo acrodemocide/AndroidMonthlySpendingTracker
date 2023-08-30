@@ -59,9 +59,10 @@ fun HomeScreen () {
     ).build()
 
     // Initialize the running total with expenses from the current month
-    val currentMonth = Calendar.getInstance().apply {
-        set(Calendar.DAY_OF_MONTH, 1) // Set to the first day of the month
-    }.time
+//    val currentMonth = Calendar.getInstance().apply {
+//        set(Calendar.DAY_OF_MONTH, 1) // Set to the first day of the month
+//    }.time
+    val currentMonth = getFirstOfCurrentMonth()
 
     var totalAmount by remember { mutableDoubleStateOf(0.0) }
 

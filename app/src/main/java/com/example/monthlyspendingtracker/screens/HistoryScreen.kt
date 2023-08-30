@@ -45,9 +45,10 @@ fun HistoryScreen () {
     ).build()
 
     // Initialize the running total with expenses from the current month
-    val currentMonth = Calendar.getInstance().apply {
-        set(Calendar.DAY_OF_MONTH, 1) // Set to the first day of the month
-    }.time
+//    val currentMonth = Calendar.getInstance().apply {
+//        set(Calendar.DAY_OF_MONTH, 1) // Set to the first day of the month
+//    }.time
+    val currentMonth = getFirstOfCurrentMonth()
 
     var expenses: List<ExpenseEntity> by remember { mutableStateOf(emptyList<ExpenseEntity>()) }
 
@@ -77,15 +78,6 @@ fun HistoryScreen () {
             )
         }
         item {
-            ListItem(
-                headlineContent = { Text("One line list item with 24x24 icon") },
-                leadingContent = {
-                    Icon(
-                        Icons.Filled.Favorite,
-                        contentDescription = "Localized description",
-                    )
-                }
-            )
             ListItem(
                 headlineContent = { Text("Three line list item") },
                 overlineContent = { Text("OVERLINE") },
