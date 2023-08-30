@@ -44,10 +44,6 @@ fun HistoryScreen () {
         "expenses-db"
     ).build()
 
-    // Initialize the running total with expenses from the current month
-//    val currentMonth = Calendar.getInstance().apply {
-//        set(Calendar.DAY_OF_MONTH, 1) // Set to the first day of the month
-//    }.time
     val currentMonth = getFirstOfCurrentMonth()
 
     var expenses: List<ExpenseEntity> by remember { mutableStateOf(emptyList<ExpenseEntity>()) }
@@ -107,7 +103,7 @@ fun HistoryScreen () {
                 ListItem(
                     headlineContent = { Text("${format.format(expense.price)}") },
                     overlineContent = { Text("${expense.category}") },
-                    supportingContent = { Text("${expense.date?.date} ${expense.date?.month}") },
+                    supportingContent = { Text("${expense.date?.date} ${getMonthFromNumber(expense.date?.month)}") },
                     leadingContent = {
                         Icon(
                             painterResource(R.drawable.ic_baseline_attach_money_24),
