@@ -12,7 +12,9 @@ interface ExpenseDao {
     @Insert
     fun insertExpense(expense: ExpenseEntity)
 
-//    suspend
     @Query("SELECT SUM(price) FROM expenses WHERE date >= :startOfMonth")
     fun getTotalAmountForMonth(startOfMonth: Date): Double?
+
+    @Query("SELECT * FROM expenses WHERE date >= :startOfMonth")
+    fun getExpensesForMonth(startOfMonth: Date): List<ExpenseEntity>
 }
