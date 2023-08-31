@@ -37,23 +37,8 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    MonthlySpendingTrackerTheme {
-        Greeting("Android")
-    }
-}
-
 @ExperimentalComposeUiApi
 @Composable
 fun MyApp() {
-    SpendingTrackerScaffold{
-        HomeScreen()
-    }
+    SpendingTrackerScaffold()
 }

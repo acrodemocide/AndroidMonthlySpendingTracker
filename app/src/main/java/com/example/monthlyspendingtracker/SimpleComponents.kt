@@ -1,22 +1,35 @@
 package com.example.monthlyspendingtracker
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.ModalDrawer
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.monthlyspendingtracker.screens.HistoryScreen
+import com.example.monthlyspendingtracker.screens.HomeScreen
+import com.example.monthlyspendingtracker.screens.SettingsScreen
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,33 +48,37 @@ fun TopBar(onMenuClick: () -> Unit) {
     )
 }
 
-@Composable
-fun Drawer() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        repeat(5) { item ->
-            Text(text = "Item $item", color = Color.Black)
-        }
-    }
+class DrawerItem(val name: String, val icon: ImageVector) {
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun SpendingTrackerScaffold(
-    content: @Composable () -> Unit
-) {
+fun SpendingTrackerScaffold() {
     val drawerState =
-        androidx.compose.material.rememberDrawerState(androidx.compose.material.DrawerValue.Closed)
+        androidx.compose.material3.rememberDrawerState(androidx.compose.material3.DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    val items = listOf(DrawerItem("Home", Icons.Default.Home), DrawerItem("Edit History", Icons.Default.Edit), DrawerItem("Settings", Icons.Default.Settings))
+    val selectedItem = remember { mutableStateOf(items[0]) }
 
-    ModalDrawer(
+    ModalNavigationDrawer(
         drawerState = drawerState,
-        gesturesEnabled = drawerState.isOpen,
-        drawerContent = {Drawer()},
+        drawerContent = {
+            ModalDrawerSheet {
+                Spacer(Modifier.height(12.dp))
+                items.forEach { item ->
+                    NavigationDrawerItem(
+                        icon = { Icon(item.icon, contentDescription = null) },
+                        label = { Text(item.name) },
+                        selected = item == selectedItem.value,
+                        onClick = {
+                            scope.launch { drawerState.close() }
+                            selectedItem.value = item
+                        },
+                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                    )
+                }
+            }
+        },
         content = {
             Column {
                 TopBar(
@@ -75,7 +92,15 @@ fun SpendingTrackerScaffold(
                         }
                     }
                 )
-                content()
+                if (selectedItem.value.name == "Home") {
+                    HomeScreen()
+                } else if (selectedItem.value.name == "Edit History") {
+                    HistoryScreen()
+                } else if (selectedItem.value.name == "Settings") {
+                    SettingsScreen()
+                } else {
+                    HomeScreen()
+                }
             }
         }
     )
