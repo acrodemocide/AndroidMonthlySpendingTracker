@@ -27,6 +27,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -41,10 +43,14 @@ import androidx.room.Room
 import com.example.monthlyspendingtracker.R
 import com.example.monthlyspendingtracker.data.AppDatabase
 import com.example.monthlyspendingtracker.data.ExpenseEntity
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.NumberFormat
 import java.util.Currency
+import java.util.Date
+
 //import androidx.compose.material3.HorizontalDivider
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,7 +79,7 @@ fun HistoryScreen () {
     format.currency = Currency.getInstance("USD")
 
     val openDialog = remember { mutableStateOf(false) }
-//    var selectedAmount = remember { mutableDoubleStateOf(0.0) }
+    var selectedId = remember { mutableLongStateOf(0) }
 
     if (openDialog.value) {
         AlertDialog(
@@ -111,13 +117,24 @@ fun HistoryScreen () {
                         onClick = {
                             openDialog.value = false
                         },
-                        modifier = Modifier.align(Alignment.End)
+                        modifier = Modifier.align(Alignment.Start)
                     ) {
                         Text("Cancel")
                     }
                     TextButton(
                         onClick = {
-                            openDialog.value = false
+                            try {
+                                openDialog.value = false
+                                var selectedExpense = expenses.find { it.id == selectedId.value }
+                                if (selectedExpense != null) {
+                                    selectedExpense.price = purchaseAmount.drop(1).toDouble()
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        database.expenseDao().updateExpense(selectedExpense)
+                                    }
+                                }
+                            } catch(ex: Exception) {
+                                println(ex)
+                            }
                         },
                         modifier = Modifier.align(Alignment.End)
                     ) {
@@ -165,6 +182,7 @@ fun HistoryScreen () {
                     modifier = Modifier.clickable {
                         openDialog.value = true
                         purchaseAmount = "${format.format(expense.price)}"
+                        selectedId.value = expense.id
                     }
                 )
             }
