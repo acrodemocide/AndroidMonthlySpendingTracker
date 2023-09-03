@@ -3,14 +3,18 @@ package com.example.monthlyspendingtracker.screens
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
@@ -26,8 +30,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,7 +51,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.NumberFormat
 import java.util.Currency
-import java.util.Date
+
 
 //import androidx.compose.material3.HorizontalDivider
 
@@ -113,32 +115,36 @@ fun HistoryScreen () {
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(focusedTextColor = Color.Black, unfocusedTextColor = Color.Black)
                     )
-                    TextButton(
-                        onClick = {
-                            openDialog.value = false
-                        },
-                        modifier = Modifier.align(Alignment.Start)
-                    ) {
-                        Text("Cancel")
-                    }
-                    TextButton(
-                        onClick = {
-                            try {
+                    Row {
+                        TextButton(
+                            onClick = {
                                 openDialog.value = false
-                                var selectedExpense = expenses.find { it.id == selectedId.value }
-                                if (selectedExpense != null) {
-                                    selectedExpense.price = purchaseAmount.drop(1).toDouble()
-                                    CoroutineScope(Dispatchers.IO).launch {
-                                        database.expenseDao().updateExpense(selectedExpense)
+                            },
+//                            modifier = Modifier.align(Alignment.Start)
+                            modifier = Modifier.width(110.dp)
+                        ) {
+                            Text("Cancel")
+                        }
+                        TextButton(
+                            onClick = {
+                                try {
+                                    openDialog.value = false
+                                    var selectedExpense = expenses.find { it.id == selectedId.value }
+                                    if (selectedExpense != null) {
+                                        selectedExpense.price = purchaseAmount.drop(1).toDouble()
+                                        CoroutineScope(Dispatchers.IO).launch {
+                                            database.expenseDao().updateExpense(selectedExpense)
+                                        }
                                     }
+                                } catch(ex: Exception) {
+                                    println(ex)
                                 }
-                            } catch(ex: Exception) {
-                                println(ex)
-                            }
-                        },
-                        modifier = Modifier.align(Alignment.End)
-                    ) {
-                        Text("Save")
+                            },
+//                            modifier = Modifier.align(Alignment.End)
+                            modifier = Modifier.width(110.dp)
+                        ) {
+                            Text("Save")
+                        }
                     }
                 }
             }
