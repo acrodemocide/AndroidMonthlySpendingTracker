@@ -26,6 +26,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -72,6 +73,7 @@ fun HistoryScreen () {
     format.currency = Currency.getInstance("USD")
 
     val openDialog = remember { mutableStateOf(false) }
+//    var selectedAmount = remember { mutableDoubleStateOf(0.0) }
 
     if (openDialog.value) {
         AlertDialog(
@@ -99,7 +101,7 @@ fun HistoryScreen () {
                     OutlinedTextField(
                         value = purchaseAmount,
                         onValueChange = { purchaseAmount = it },
-                        label = { Text("Enter purchase price (USD)") },
+                        label = { Text("Edit purchase price (USD)") },
                         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                         leadingIcon = { Icon(painterResource(R.drawable.ic_baseline_attach_money_24), contentDescription = null) },
                         modifier = Modifier.fillMaxWidth(),
@@ -162,6 +164,7 @@ fun HistoryScreen () {
                     ),
                     modifier = Modifier.clickable {
                         openDialog.value = true
+                        purchaseAmount = "${format.format(expense.price)}"
                     }
                 )
             }
