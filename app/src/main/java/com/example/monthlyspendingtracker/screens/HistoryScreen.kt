@@ -120,7 +120,6 @@ fun HistoryScreen () {
                             onClick = {
                                 openDialog.value = false
                             },
-//                            modifier = Modifier.align(Alignment.Start)
                             modifier = Modifier.width(110.dp)
                         ) {
                             Text("Cancel")
@@ -140,7 +139,6 @@ fun HistoryScreen () {
                                     println(ex)
                                 }
                             },
-//                            modifier = Modifier.align(Alignment.End)
                             modifier = Modifier.width(110.dp)
                         ) {
                             Text("Save")
