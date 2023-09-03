@@ -13,11 +13,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -36,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -43,6 +44,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.room.Room
 import com.example.monthlyspendingtracker.R
+import com.example.monthlyspendingtracker.categories
 import com.example.monthlyspendingtracker.data.AppDatabase
 import com.example.monthlyspendingtracker.data.ExpenseEntity
 import kotlinx.coroutines.CoroutineScope
@@ -51,9 +53,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.NumberFormat
 import java.util.Currency
-
-
-//import androidx.compose.material3.HorizontalDivider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -82,6 +81,8 @@ fun HistoryScreen () {
 
     val openDialog = remember { mutableStateOf(false) }
     var selectedId = remember { mutableLongStateOf(0) }
+    var expanded by remember { mutableStateOf(false) }
+    var selectedCategory by remember { mutableStateOf(categories.first()) }
 
     if (openDialog.value) {
         AlertDialog(
@@ -115,6 +116,42 @@ fun HistoryScreen () {
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(focusedTextColor = Color.Black, unfocusedTextColor = Color.Black)
                     )
+
+                    OutlinedTextField(
+                        value = selectedCategory,
+                        onValueChange = {selectedCategory = it},
+                        label = { Text("Category") },
+                        trailingIcon = {
+                            Icon(
+                                painterResource(R.drawable.ic_baseline_keyboard_arrow_down_24),
+                                contentDescription = null,
+                                modifier = Modifier.clickable { expanded = true }
+                            )
+                        },
+                        readOnly = true,
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .onFocusChanged { if (it.isFocused) expanded = true },
+                        colors = OutlinedTextFieldDefaults.colors(focusedTextColor = Color.Black, unfocusedTextColor = Color.Black)
+                    )
+
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        for (category in categories) {
+                            DropdownMenuItem(
+                                text= { Text(category) },
+                                onClick = {
+                                    selectedCategory = category
+                                    expanded = false
+                                },
+                            )
+                        }
+                    }
+
                     Row {
                         TextButton(
                             onClick = {
@@ -126,17 +163,14 @@ fun HistoryScreen () {
                         }
                         TextButton(
                             onClick = {
-                                try {
-                                    openDialog.value = false
-                                    var selectedExpense = expenses.find { it.id == selectedId.value }
-                                    if (selectedExpense != null) {
-                                        selectedExpense.price = purchaseAmount.drop(1).toDouble()
-                                        CoroutineScope(Dispatchers.IO).launch {
-                                            database.expenseDao().updateExpense(selectedExpense)
-                                        }
+                                openDialog.value = false
+                                var selectedExpense = expenses.find { it.id == selectedId.value }
+                                if (selectedExpense != null) {
+                                    selectedExpense.price = purchaseAmount.drop(1).toDouble()
+                                    selectedExpense.category = selectedCategory
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        database.expenseDao().updateExpense(selectedExpense)
                                     }
-                                } catch(ex: Exception) {
-                                    println(ex)
                                 }
                             },
                             modifier = Modifier.width(110.dp)
@@ -187,10 +221,10 @@ fun HistoryScreen () {
                         openDialog.value = true
                         purchaseAmount = "${format.format(expense.price)}"
                         selectedId.value = expense.id
+                        selectedCategory = expense.category
                     }
                 )
             }
-            //        HorizontalDivider()
         }
     }
 }

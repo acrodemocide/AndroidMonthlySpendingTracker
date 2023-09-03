@@ -18,12 +18,20 @@ import com.example.monthlyspendingtracker.screens.HomeScreen
 //    GROCERIES("Groceries", Icons.Default.KeyboardArrowDown)
 //}
 
-enum class Category(val label: String) {
-    DANIEL_FUN("Daniel Fun"),
-    KATIE_FUN("Katie Fun"),
-    DEBT("Debt"),
-    GROCERIES("Groceries")
-}
+//enum class Category(val label: String) {
+//    DANIEL_FUN("Daniel Fun"),
+//    KATIE_FUN("Katie Fun"),
+//    DEBT("Debt"),
+//    GROCERIES("Groceries")
+//}
+
+// TODO: this will be set in settings then loaded from DB
+val categories = listOf(
+    "Daniel Fun",
+    "Katie Fun",
+    "Debt",
+    "Groceries"
+)
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalComposeUiApi::class)

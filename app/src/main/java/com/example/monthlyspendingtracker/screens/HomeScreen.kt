@@ -35,7 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.room.Room
-import com.example.monthlyspendingtracker.Category
+//import com.example.monthlyspendingtracker.Category
 import com.example.monthlyspendingtracker.data.AppDatabase
 import com.example.monthlyspendingtracker.data.ExpenseEntity
 import kotlinx.coroutines.CoroutineScope
@@ -43,11 +43,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.NumberFormat
-import java.util.Calendar
 import java.util.Currency
 import java.util.Date
 
 import com.example.monthlyspendingtracker.R
+import com.example.monthlyspendingtracker.categories
 
 @ExperimentalComposeUiApi
 @Composable
@@ -69,7 +69,7 @@ fun HomeScreen () {
     }
 
     var purchaseAmount by remember { mutableStateOf("") }
-    var selectedCategory by remember { mutableStateOf(Category.DANIEL_FUN) }
+    var selectedCategory by remember { mutableStateOf(categories.first()) }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val format: NumberFormat = NumberFormat.getCurrencyInstance()
@@ -108,8 +108,8 @@ fun HomeScreen () {
         // Dropdown menu for categories
         var expanded by remember { mutableStateOf(false) }
         OutlinedTextField(
-            value = selectedCategory.label,
-            onValueChange = {},
+            value = selectedCategory,
+            onValueChange = {selectedCategory = it},
             label = { Text("Category") },
             trailingIcon = {
                 Icon(
@@ -131,9 +131,9 @@ fun HomeScreen () {
             onDismissRequest = { expanded = false },
             modifier = Modifier.fillMaxWidth()
         ) {
-            for (category in Category.values()) {
+            for (category in categories) {
                 DropdownMenuItem(
-                    text= { Text(category.label) },
+                    text= { Text(category) },
                     onClick = {
                         selectedCategory = category
                         expanded = false
@@ -151,13 +151,13 @@ fun HomeScreen () {
                 totalAmount += amount
 
                 // Create an Expense object and insert it into the database
-                val expense = ExpenseEntity(date = Date(), category = selectedCategory.label, price = amount)
+                val expense = ExpenseEntity(date = Date(), category = selectedCategory, price = amount)
                 CoroutineScope(Dispatchers.IO).launch {
                     database.expenseDao().insertExpense(expense)
                 }
 
                 purchaseAmount = ""
-                selectedCategory = Category.DANIEL_FUN
+                selectedCategory = categories.first()
                 keyboardController?.hide()
             }
         ) {
