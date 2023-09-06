@@ -102,18 +102,25 @@ fun HistoryScreen () {
                 openDialog.value = false
             },
             title = {
-                Text(text = "Title")
+                Text(text = "Confirm Delete")
             },
             text = {
-                Text(text = "Turned on by default")
+                Text(text = "Do you want to delete this transaction?")
             },
             confirmButton = {
                 TextButton(
                     onClick = {
                         openDeleteConfirm.value = false
+                        var selectedExpense = expenses.find { it.id == selectedId.value }
+                        if (selectedExpense != null) {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                database.expenseDao().deleteExpense(selectedExpense)
+                                expenses = database.expenseDao().getExpensesForMonth(startOfCurrentMonth) ?: emptyList()
+                            }
+                        }
                     }
                 ) {
-                    Text("Confirm")
+                    Text("Delete")
                 }
             },
             dismissButton = {
@@ -122,7 +129,7 @@ fun HistoryScreen () {
                         openDeleteConfirm.value = false
                     }
                 ) {
-                    Text("Dismiss")
+                    Text("Cancel")
                 }
             }
         )
@@ -253,7 +260,10 @@ fun HistoryScreen () {
 //                        )
 
                         IconButton(
-                            onClick = { openDeleteConfirm.value = true }
+                            onClick = {
+                                openDeleteConfirm.value = true
+                                selectedId.value = expense.id
+                            }
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
