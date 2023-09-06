@@ -4,10 +4,16 @@ import java.util.Calendar
 import java.util.Date
 
 fun getFirstOfCurrentMonth (): Date {
-    val startOfCurrentMonth = Calendar.getInstance().apply {
+    val startDateOfCurrentMonth = Calendar.getInstance().apply {
         set(Calendar.DAY_OF_MONTH, 1) // Set to the first day of the month
     }.time
-    return startOfCurrentMonth
+    val startOfCurrentMonth = Calendar.getInstance()
+    startOfCurrentMonth.time = startDateOfCurrentMonth
+    startOfCurrentMonth[Calendar.HOUR_OF_DAY] = 0
+    startOfCurrentMonth[Calendar.MINUTE] = 0
+    startOfCurrentMonth[Calendar.SECOND] = 0
+    startOfCurrentMonth[Calendar.MILLISECOND] = 0
+    return startOfCurrentMonth.time
 }
 
 fun getMonthFromNumber(dateNumber: Int?): String {

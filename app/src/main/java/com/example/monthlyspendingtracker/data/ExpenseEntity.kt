@@ -11,6 +11,6 @@ import java.util.*
 data class ExpenseEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     @ColumnInfo(name = "date") val date: Date?,
-    @ColumnInfo(name = "category") val category: String,
-    @ColumnInfo(name = "price") val price: Double
+    @ColumnInfo(name = "category") var category: String,
+    @ColumnInfo(name = "price") var price: Double
 )
