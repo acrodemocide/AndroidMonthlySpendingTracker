@@ -1,6 +1,5 @@
 package com.example.monthlyspendingtracker.screens
 
-import android.content.Context
 import android.os.Environment
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +21,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -253,16 +253,14 @@ fun HistoryScreen () {
             )
             Button(
                 onClick = {
-//                    val csvExpense = remember { mutableStateOf(emptyList<ExpenseEntity>()) }
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
                             val expenses = database.expenseDao().getExpensesForMonth(startOfCurrentMonth) ?: emptyList()
                             val csvString = expenses.joinToString("\n") { "${it.date?.date} ${getMonthFromNumber(it.date?.month)},${it.category},${it.price}" }
                             val fileName = "expenses.csv"
                             val filePath =
-                                Environment.getExternalStoragePublicDirectory( //Environment.DIRECTORY_PICTURES
-//                                    Environment.DIRECTORY_DCIM + "/YourFolder/"
-                                Environment.DIRECTORY_DOWNLOADS + "/fileName"
+                                Environment.getExternalStoragePublicDirectory(
+                                Environment.DIRECTORY_DOWNLOADS
                                 )
                             if (!filePath.exists()) {
                                 filePath.mkdirs()
@@ -271,7 +269,6 @@ fun HistoryScreen () {
                             var file: File = File(filePath, fileName)
 
                             file.createNewFile()
-//                            val outputStream = OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE))
                             val fileOutputStream =  FileOutputStream(file)
                             val outputStream = OutputStreamWriter(fileOutputStream)
                             outputStream.append(csvString)
@@ -282,7 +279,8 @@ fun HistoryScreen () {
                             println(e)
                         }
                     }
-                }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0F9D58)),
             ) {
                 Text("Export CSV")
             }
