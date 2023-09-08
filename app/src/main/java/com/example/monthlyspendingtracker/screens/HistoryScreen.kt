@@ -1,6 +1,7 @@
 package com.example.monthlyspendingtracker.screens
 
 import android.content.Context
+import android.os.Environment
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -58,8 +59,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStreamWriter
 import java.text.NumberFormat
 import java.util.Currency
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -255,11 +259,25 @@ fun HistoryScreen () {
                             val expenses = database.expenseDao().getExpensesForMonth(startOfCurrentMonth) ?: emptyList()
                             val csvString = expenses.joinToString("\n") { "${it.date?.date} ${getMonthFromNumber(it.date?.month)},${it.category},${it.price}" }
                             val fileName = "expenses.csv"
-//                            File(fileName).writeText(csvString)
-//                            val outputStream = LocalContext.current.openFileOutput(fileName, LocalContext.MODE_PRIVATE)
-                            val outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE)
-                            outputStream.write(csvString.toByteArray())
+                            val filePath =
+                                Environment.getExternalStoragePublicDirectory( //Environment.DIRECTORY_PICTURES
+//                                    Environment.DIRECTORY_DCIM + "/YourFolder/"
+                                Environment.DIRECTORY_DOWNLOADS + "/fileName"
+                                )
+                            if (!filePath.exists()) {
+                                filePath.mkdirs()
+                            }
+
+                            var file: File = File(filePath, fileName)
+
+                            file.createNewFile()
+//                            val outputStream = OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE))
+                            val fileOutputStream =  FileOutputStream(file)
+                            val outputStream = OutputStreamWriter(fileOutputStream)
+                            outputStream.append(csvString)
                             outputStream.close()
+                            fileOutputStream.flush()
+                            fileOutputStream.close()
                         } catch (e: Exception) {
                             println(e)
                         }
