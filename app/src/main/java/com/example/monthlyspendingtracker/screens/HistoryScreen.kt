@@ -280,7 +280,9 @@ fun HistoryScreen () {
                         }
                     }
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0F9D58)),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF0F9D58), contentColor = Color.White
+                ),
             ) {
                 Text("Export CSV")
             }
