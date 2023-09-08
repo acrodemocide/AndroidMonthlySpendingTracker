@@ -1,9 +1,9 @@
 package com.example.monthlyspendingtracker.screens
 
+import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,14 +15,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -59,6 +57,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
 import java.text.NumberFormat
 import java.util.Currency
 
@@ -233,6 +232,8 @@ fun HistoryScreen () {
         }
     }
 
+    val context = LocalContext.current
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -246,6 +247,27 @@ fun HistoryScreen () {
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(16.dp)
             )
+            Button(
+                onClick = {
+//                    val csvExpense = remember { mutableStateOf(emptyList<ExpenseEntity>()) }
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            val expenses = database.expenseDao().getExpensesForMonth(startOfCurrentMonth) ?: emptyList()
+                            val csvString = expenses.joinToString("\n") { "${it.date?.date} ${getMonthFromNumber(it.date?.month)},${it.category},${it.price}" }
+                            val fileName = "expenses.csv"
+//                            File(fileName).writeText(csvString)
+//                            val outputStream = LocalContext.current.openFileOutput(fileName, LocalContext.MODE_PRIVATE)
+                            val outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE)
+                            outputStream.write(csvString.toByteArray())
+                            outputStream.close()
+                        } catch (e: Exception) {
+                            println(e)
+                        }
+                    }
+                }
+            ) {
+                Text("Export CSV")
+            }
         }
         item {
             expenses.forEach { expense ->
@@ -254,11 +276,6 @@ fun HistoryScreen () {
                     overlineContent = { Text("${expense.category}") },
                     supportingContent = { Text("${expense.date?.date} ${getMonthFromNumber(expense.date?.month)}") },
                     leadingContent = {
-//                        Icon(
-//                            painterResource(R.drawable.ic_baseline_attach_money_24),
-//                            contentDescription = "Localized description",
-//                        )
-
                         IconButton(
                             onClick = {
                                 openDeleteConfirm.value = true
