@@ -106,6 +106,7 @@ fun HistoryScreen () {
     val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
+        modifier = Modifier.background(Color.White),
         content = { innerPadding ->
             DeleteDialog(
                 isDialogOpen = openDeleteConfirm.value,
