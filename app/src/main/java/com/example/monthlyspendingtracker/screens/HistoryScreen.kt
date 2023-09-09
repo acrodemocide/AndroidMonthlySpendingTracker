@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
@@ -25,12 +26,16 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -40,6 +45,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,6 +56,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.room.Room
+import com.example.monthlyspendingtracker.DeleteDialog
 import com.example.monthlyspendingtracker.R
 import com.example.monthlyspendingtracker.categories
 import com.example.monthlyspendingtracker.data.AppDatabase
@@ -96,47 +103,47 @@ fun HistoryScreen () {
     var selectedCategory by remember { mutableStateOf(categories.first()) }
     val openDeleteConfirm = remember { mutableStateOf(false) }
 
-    if (openDeleteConfirm.value) {
-        AlertDialog(
-            onDismissRequest = {
-                // Dismiss the dialog when the user clicks outside the dialog or on the back
-                // button. If you want to disable that functionality, simply use an empty
-                // onDismissRequest.
-                openDialog.value = false
-            },
-            title = {
-                Text(text = "Confirm Delete")
-            },
-            text = {
-                Text(text = "Do you want to delete this transaction?")
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        openDeleteConfirm.value = false
-                        var selectedExpense = expenses.find { it.id == selectedId.value }
-                        if (selectedExpense != null) {
-                            CoroutineScope(Dispatchers.IO).launch {
-                                database.expenseDao().deleteExpense(selectedExpense)
-                                expenses = database.expenseDao().getExpensesForMonth(startOfCurrentMonth) ?: emptyList()
-                            }
-                        }
-                    }
-                ) {
-                    Text("Delete")
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        openDeleteConfirm.value = false
-                    }
-                ) {
-                    Text("Cancel")
+//    val snackbarHostState = remember { SnackbarHostState() }
+//    val scope = rememberCoroutineScope()
+//    Scaffold(
+//        snackbarHost = { SnackbarHost(snackbarHostState) },
+//        floatingActionButton = {
+//            var clickCount by remember { mutableStateOf(0) }
+//            ExtendedFloatingActionButton(
+//                onClick = {
+//                    // show snackbar as a suspend function
+//                    scope.launch {
+//                        snackbarHostState.showSnackbar(
+//                            "Snackbar # ${++clickCount}"
+//                        )
+//                    }
+//                }
+//            ) { Text("Show snackbar") }
+//        },
+//        content = { innerPadding ->
+//            Text(
+//                text = "Body content",
+//                modifier = Modifier
+//                    .padding(innerPadding)
+//                    .fillMaxSize()
+//                    .wrapContentSize()
+//            )
+//        }
+//    )
+
+    DeleteDialog(
+        isDialogOpen = openDeleteConfirm.value,
+        onDialogClose = { openDeleteConfirm.value = false },
+        onDialogConfirm = {
+            openDeleteConfirm.value = false
+            var selectedExpense = expenses.find { it.id == selectedId.value }
+            if (selectedExpense != null) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    database.expenseDao().deleteExpense(selectedExpense)
+                    expenses = database.expenseDao().getExpensesForMonth(startOfCurrentMonth) ?: emptyList()
                 }
             }
-        )
-    }
+        })
 
     if (openDialog.value) {
         AlertDialog(
