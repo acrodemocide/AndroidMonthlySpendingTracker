@@ -2,6 +2,7 @@ package com.example.monthlyspendingtracker.screens
 
 import android.annotation.SuppressLint
 import android.os.Environment
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
@@ -27,7 +27,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -43,11 +42,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -107,22 +104,8 @@ fun HistoryScreen () {
     val openDeleteConfirm = remember { mutableStateOf(false) }
 
     val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
-//        floatingActionButton = {
-//            var clickCount by remember { mutableIntStateOf(0) }
-//            ExtendedFloatingActionButton(
-//                onClick = {
-//                    // show snackbar as a suspend function
-//                    scope.launch {
-//                        snackbarHostState.showSnackbar(
-//                            "Snackbar # ${++clickCount}"
-//                        )
-//                    }
-//                }
-//            ) { Text("Show snackbar") }
-//        },
         content = { innerPadding ->
             DeleteDialog(
                 isDialogOpen = openDeleteConfirm.value,
@@ -141,9 +124,6 @@ fun HistoryScreen () {
             if (openDialog.value) {
                 AlertDialog(
                     onDismissRequest = {
-                        // Dismiss the dialog when the user clicks outside the dialog or on the back
-                        // button. If you want to disable that functionality, simply use an empty
-                        // onDismissRequest.
                         openDialog.value = false
                     }
                 ) {
@@ -237,19 +217,20 @@ fun HistoryScreen () {
             }
 
             val context = LocalContext.current
-
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
+                    .padding(16.dp)
+                    .background(Color.White),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
             ) {
                 item {
                     Text(
                         text = "Transaction History",
                         style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.padding(16.dp),
+                        color = Color.Black
                     )
                     Button(
                         onClick = {
