@@ -8,6 +8,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,8 +50,7 @@ fun TopBar(onMenuClick: () -> Unit) {
     )
 }
 
-class DrawerItem(val name: String, val icon: ImageVector) {
-}
+class DrawerItem(val name: String, val icon: ImageVector)
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -104,4 +105,37 @@ fun SpendingTrackerScaffold() {
             }
         }
     )
+}
+
+@Composable
+fun DeleteDialog(isDialogOpen: Boolean, onDialogClose: () -> Unit, onDialogConfirm: () -> Unit) {
+    if (isDialogOpen) {
+        AlertDialog(
+            onDismissRequest = onDialogClose,
+            title = { Text("Delete this expense?") },
+            text = { Text("Are you sure you want to delete this expense?") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        onDialogConfirm()
+                    },
+                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFD93025)
+                    )
+                ) {
+                    Text("Confirm")
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = onDialogClose,
+                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF0F9D58)
+                    )
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 }
