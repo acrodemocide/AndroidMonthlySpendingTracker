@@ -76,11 +76,6 @@ import java.util.Currency
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryScreen () {
-//    val database = Room.databaseBuilder(
-//        LocalContext.current,
-//        AppDatabase::class.java,
-//        "expenses-db"
-//    ).build()
     val database = GetDatabase()
 
     val startOfCurrentMonth = getFirstOfCurrentMonth()
