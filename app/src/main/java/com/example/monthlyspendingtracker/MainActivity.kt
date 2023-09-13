@@ -11,20 +11,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.monthlyspendingtracker.ui.theme.MonthlySpendingTrackerTheme
 import com.example.monthlyspendingtracker.screens.HomeScreen
 
-//enum class Category(val label: String, val icon: Unit) {
-//    DANIEL_FUN("Daniel Fun", Icons.Default.Money),
-//    KATIE_FUN("Katie Fun", Icons.Default.Timeline),
-//    DEBT("Debt", Icons.Default.List),
-//    GROCERIES("Groceries", Icons.Default.KeyboardArrowDown)
-//}
-
-//enum class Category(val label: String) {
-//    DANIEL_FUN("Daniel Fun"),
-//    KATIE_FUN("Katie Fun"),
-//    DEBT("Debt"),
-//    GROCERIES("Groceries")
-//}
-
 // TODO: this will be set in settings then loaded from DB
 val categories = listOf(
     "Daniel Fun",

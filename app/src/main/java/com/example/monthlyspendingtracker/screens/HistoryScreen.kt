@@ -60,6 +60,7 @@ import com.example.monthlyspendingtracker.R
 import com.example.monthlyspendingtracker.categories
 import com.example.monthlyspendingtracker.data.AppDatabase
 import com.example.monthlyspendingtracker.data.ExpenseEntity
+import com.example.monthlyspendingtracker.data.GetDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -75,11 +76,12 @@ import java.util.Currency
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryScreen () {
-    val database = Room.databaseBuilder(
-        LocalContext.current,
-        AppDatabase::class.java,
-        "expenses-db"
-    ).build()
+//    val database = Room.databaseBuilder(
+//        LocalContext.current,
+//        AppDatabase::class.java,
+//        "expenses-db"
+//    ).build()
+    val database = GetDatabase()
 
     val startOfCurrentMonth = getFirstOfCurrentMonth()
 
