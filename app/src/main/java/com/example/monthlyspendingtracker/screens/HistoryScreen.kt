@@ -292,7 +292,9 @@ fun HistoryScreen () {
                                     )
                                 }
                             },
-                            trailingContent = { Text("Transaction notes") },
+                            trailingContent = { Text(
+                                "${if (expense.description != null) expense.description else "No Description"}"
+                            ) },
                             colors = androidx.compose.material3.ListItemDefaults.colors(
                                 containerColor = Color.White,
                                 headlineColor = Color.Black,
