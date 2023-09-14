@@ -236,7 +236,9 @@ fun HistoryScreen () {
                             CoroutineScope(Dispatchers.IO).launch {
                                 try {
                                     val expenses = database.expenseDao().getExpensesForMonth(startOfCurrentMonth) ?: emptyList()
-                                    val csvString = expenses.joinToString("\n") { "${it.date?.date} ${getMonthFromNumber(it.date?.month)},${it.category},${it.price}" }
+                                    val csvString = expenses.joinToString("\n") {
+                                        "${it.date?.date} ${getMonthFromNumber(it.date?.month)},${it.category},${it.price},${if (it.description != null) it.description else ""}"
+                                    }
                                     val fileName = "expenses.csv"
                                     val filePath =
                                         Environment.getExternalStoragePublicDirectory(

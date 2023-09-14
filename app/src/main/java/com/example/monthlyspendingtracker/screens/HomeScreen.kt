@@ -152,8 +152,7 @@ fun HomeScreen () {
             value = description,
             onValueChange = { description = it },
             label = { Text("Enter Description") },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            leadingIcon = { Icon(painterResource(R.drawable.ic_baseline_attach_money_24), contentDescription = null) },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
             modifier = Modifier.fillMaxWidth(),
             colors = OutlinedTextFieldDefaults.colors(focusedTextColor = Color.Black, unfocusedTextColor = Color.Black)
         )
@@ -184,6 +183,7 @@ fun HomeScreen () {
 
                 purchaseAmount = ""
                 selectedCategory = categories.first()
+                description = ""
                 keyboardController?.hide()
             }
         ) {
