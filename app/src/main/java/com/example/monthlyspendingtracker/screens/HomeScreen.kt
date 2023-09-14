@@ -48,28 +48,31 @@ import java.util.Date
 
 import com.example.monthlyspendingtracker.R
 import com.example.monthlyspendingtracker.categories
+import com.example.monthlyspendingtracker.data.GetDatabase
 
 @ExperimentalComposeUiApi
 @Composable
 fun HomeScreen () {
-    val database = Room.databaseBuilder(
-        LocalContext.current,
-        AppDatabase::class.java,
-        "expenses-db"
-    ).build()
+    val database = GetDatabase()
+
 
     val currentMonth = getFirstOfCurrentMonth()
 
     var totalAmount by remember { mutableDoubleStateOf(0.0) }
     LaunchedEffect(Unit) {
-        val amountFromDb = withContext(Dispatchers.IO) {
-            database.expenseDao().getTotalAmountForMonth(currentMonth) ?: 0.0
+        try {
+            val amountFromDb = withContext(Dispatchers.IO) {
+                database.expenseDao().getTotalAmountForMonth(currentMonth) ?: 0.0
+            }
+            totalAmount = amountFromDb
+        } catch (e: Exception) {
+            println("Error: ${e.message}")
         }
-        totalAmount = amountFromDb
     }
 
     var purchaseAmount by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf(categories.first()) }
+    var description by remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val format: NumberFormat = NumberFormat.getCurrencyInstance()
@@ -144,6 +147,18 @@ fun HomeScreen () {
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Display running total
+        OutlinedTextField(
+            value = description,
+            onValueChange = { description = it },
+            label = { Text("Enter Description") },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(focusedTextColor = Color.Black, unfocusedTextColor = Color.Black)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         // Submit button
         IconButton(
             onClick = {
@@ -151,13 +166,24 @@ fun HomeScreen () {
                 totalAmount += amount
 
                 // Create an Expense object and insert it into the database
-                val expense = ExpenseEntity(date = Date(), category = selectedCategory, price = amount)
-                CoroutineScope(Dispatchers.IO).launch {
-                    database.expenseDao().insertExpense(expense)
+                val expense = ExpenseEntity(
+                    date = Date(),
+                    category = selectedCategory,
+                    price = amount,
+                    description = description
+                )
+
+                try {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        database.expenseDao().insertExpense(expense)
+                    }
+                } catch (e: Exception) {
+                    println("Error: ${e.message}")
                 }
 
                 purchaseAmount = ""
                 selectedCategory = categories.first()
+                description = ""
                 keyboardController?.hide()
             }
         ) {

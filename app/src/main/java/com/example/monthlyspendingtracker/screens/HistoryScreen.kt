@@ -60,6 +60,7 @@ import com.example.monthlyspendingtracker.R
 import com.example.monthlyspendingtracker.categories
 import com.example.monthlyspendingtracker.data.AppDatabase
 import com.example.monthlyspendingtracker.data.ExpenseEntity
+import com.example.monthlyspendingtracker.data.GetDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -75,11 +76,7 @@ import java.util.Currency
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryScreen () {
-    val database = Room.databaseBuilder(
-        LocalContext.current,
-        AppDatabase::class.java,
-        "expenses-db"
-    ).build()
+    val database = GetDatabase()
 
     val startOfCurrentMonth = getFirstOfCurrentMonth()
 
@@ -239,7 +236,9 @@ fun HistoryScreen () {
                             CoroutineScope(Dispatchers.IO).launch {
                                 try {
                                     val expenses = database.expenseDao().getExpensesForMonth(startOfCurrentMonth) ?: emptyList()
-                                    val csvString = expenses.joinToString("\n") { "${it.date?.date} ${getMonthFromNumber(it.date?.month)},${it.category},${it.price}" }
+                                    val csvString = expenses.joinToString("\n") {
+                                        "${it.date?.date} ${getMonthFromNumber(it.date?.month)},${it.category},${it.price},${if (it.description != null) it.description else ""}"
+                                    }
                                     val fileName = "expenses.csv"
                                     val filePath =
                                         Environment.getExternalStoragePublicDirectory(
@@ -295,7 +294,9 @@ fun HistoryScreen () {
                                     )
                                 }
                             },
-                            trailingContent = { Text("Transaction notes") },
+                            trailingContent = { Text(
+                                "${if (expense.description != null) expense.description else "No Description"}"
+                            ) },
                             colors = androidx.compose.material3.ListItemDefaults.colors(
                                 containerColor = Color.White,
                                 headlineColor = Color.Black,
