@@ -14,9 +14,11 @@ import com.example.monthlyspendingtracker.screens.HomeScreen
 // TODO: this will be set in settings then loaded from DB
 val categories = listOf(
     "Daniel Fun",
+    "Eating Out",
+    "Entertainment Activity",
+    "Gas",
+    "Groceries",
     "Katie Fun",
-    "Debt",
-    "Groceries"
 )
 
 class MainActivity : ComponentActivity() {
