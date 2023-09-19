@@ -24,7 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.monthlyspendingtracker.data.GetDatabase
-//import com.example.monthlyspendingtracker.data.SettingsEntity
+import com.example.monthlyspendingtracker.data.SettingsEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -34,31 +34,31 @@ fun SettingsScreen () {
 
     var categories by remember { mutableStateOf("") }
 
-//    LaunchedEffect(Unit) {
-//        try {
-//            val settingsCountFromDb = withContext(Dispatchers.IO) {
-//                database.settingsDao().getSettingsCount()
-//            }
-//
-//            if (settingsCountFromDb == 0) {
-//                val settings = SettingsEntity(category = "Car,Clothes,Eating Out,Gas,Groceries,Vacation")
-//                withContext(Dispatchers.IO) {
-//                    database.settingsDao().insertSettings(settings)
-//                }
-//            }
-//        } catch (e: Exception) {
-//            println(e)
-//        }
-//
-//        try {
-//            val settingsFromDb = withContext(Dispatchers.IO) {
-//                database.settingsDao().getSettings()
-//            }
-//            categories = settingsFromDb.first().category
-//        } catch (e: Exception) {
-//            println(e)
-//        }
-//    }
+    LaunchedEffect(Unit) {
+        try {
+            val settingsCountFromDb = withContext(Dispatchers.IO) {
+                database.settingsDao().getSettingsCount()
+            }
+
+            if (settingsCountFromDb == 0) {
+                val settings = SettingsEntity(category = "Car,Clothes,Eating Out,Gas,Groceries,Vacation")
+                withContext(Dispatchers.IO) {
+                    database.settingsDao().insertSettings(settings)
+                }
+            }
+        } catch (e: Exception) {
+            println(e)
+        }
+
+        try {
+            val settingsFromDb = withContext(Dispatchers.IO) {
+                database.settingsDao().getSettings()
+            }
+            categories = settingsFromDb.first().category
+        } catch (e: Exception) {
+            println(e)
+        }
+    }
 
     Column(
         modifier = Modifier

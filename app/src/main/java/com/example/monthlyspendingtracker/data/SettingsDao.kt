@@ -14,9 +14,9 @@ interface SettingsDao {
     @Update
     fun updateSettings(settings: SettingsEntity)
 
-//    @Query("SELECT COUNT(category) FROM settings")
-//    fun getSettingsCount(): Int
-//
-//    @Query("SELECT * FROM settings")
-//    fun getSettings(): List<SettingsEntity>
+    @Query("SELECT COUNT(category) FROM settings")
+    fun getSettingsCount(): Int
+
+    @Query("SELECT * FROM settings")
+    fun getSettings(): List<SettingsEntity>
 }
