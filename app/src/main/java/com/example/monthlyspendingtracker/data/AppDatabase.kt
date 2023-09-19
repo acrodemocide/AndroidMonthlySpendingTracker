@@ -11,16 +11,16 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(
-    version = 2,
-    entities = [ExpenseEntity::class],
+    version = 3,
+    entities = [ExpenseEntity::class, SettingsEntity::class],
     autoMigrations = [
-        AutoMigration (from = 1, to = 2)
+        AutoMigration (from = 2, to = 3)
     ],
     exportSchema = true
 )
-@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun expenseDao(): ExpenseDao
+    abstract fun settingsDao(): SettingsDao
 }
 
 val MIGRATION_1_2 = object : Migration(1, 2) {

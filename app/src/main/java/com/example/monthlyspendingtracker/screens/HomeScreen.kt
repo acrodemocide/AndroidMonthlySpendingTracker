@@ -60,14 +60,10 @@ fun HomeScreen () {
 
     var totalAmount by remember { mutableDoubleStateOf(0.0) }
     LaunchedEffect(Unit) {
-        try {
-            val amountFromDb = withContext(Dispatchers.IO) {
-                database.expenseDao().getTotalAmountForMonth(currentMonth) ?: 0.0
-            }
-            totalAmount = amountFromDb
-        } catch (e: Exception) {
-            println("Error: ${e.message}")
+        val amountFromDb = withContext(Dispatchers.IO) {
+            database.expenseDao().getTotalAmountForMonth(currentMonth) ?: 0.0
         }
+        totalAmount = amountFromDb
     }
 
     var purchaseAmount by remember { mutableStateOf("") }
