@@ -91,7 +91,10 @@ fun SettingsScreen () {
         val categoryArray = categories.split(",").toTypedArray()
         categoryArray.forEach { category ->
             ListItem(
-                headlineContent = { Text(category) },
+                headlineContent = {
+//                    Text("", modifier = Modifier.weight(1f))
+                    Text(category)
+                },
                 leadingContent = {
                     Icon(
                         imageVector = Icons.Default.Delete,
