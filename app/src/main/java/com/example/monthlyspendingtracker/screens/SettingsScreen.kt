@@ -7,7 +7,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -80,13 +87,35 @@ fun SettingsScreen () {
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(16.dp)
         )
-        OutlinedTextField(
-            value = categories,
-            onValueChange = { categories = it },
-            label = { Text("Enter categories") },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
-            modifier = Modifier.fillMaxWidth(),
-            colors = OutlinedTextFieldDefaults.colors(focusedTextColor = Color.Black, unfocusedTextColor = Color.Black)
-        )
+
+        val categoryArray = categories.split(",").toTypedArray()
+        categoryArray.forEach { category ->
+            ListItem(
+                headlineContent = { Text(category) },
+                leadingContent = {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete",
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            )}
+
+        Button (
+            onClick = { /*TODO*/ },
+            colors = ButtonDefaults.buttonColors(
+            containerColor = Color(0xFF0F9D58), contentColor = Color.White)
+        ) {
+            Text("Add Category")
+        }
+
+//        OutlinedTextField(
+//            value = categories,
+//            onValueChange = { categories = it },
+//            label = { Text("Enter categories") },
+//            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
+//            modifier = Modifier.fillMaxWidth(),
+//            colors = OutlinedTextFieldDefaults.colors(focusedTextColor = Color.Black, unfocusedTextColor = Color.Black)
+//        )
     }
 }
