@@ -108,14 +108,5 @@ fun SettingsScreen () {
         ) {
             Text("Add Category")
         }
-
-//        OutlinedTextField(
-//            value = categories,
-//            onValueChange = { categories = it },
-//            label = { Text("Enter categories") },
-//            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
-//            modifier = Modifier.fillMaxWidth(),
-//            colors = OutlinedTextFieldDefaults.colors(focusedTextColor = Color.Black, unfocusedTextColor = Color.Black)
-//        )
     }
 }
