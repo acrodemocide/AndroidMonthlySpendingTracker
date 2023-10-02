@@ -29,14 +29,10 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.room.Room
-//import com.example.monthlyspendingtracker.Category
-import com.example.monthlyspendingtracker.data.AppDatabase
 import com.example.monthlyspendingtracker.data.ExpenseEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -47,7 +43,6 @@ import java.util.Currency
 import java.util.Date
 
 import com.example.monthlyspendingtracker.R
-import com.example.monthlyspendingtracker.categories
 import com.example.monthlyspendingtracker.data.GetDatabase
 
 @ExperimentalComposeUiApi
@@ -55,15 +50,26 @@ import com.example.monthlyspendingtracker.data.GetDatabase
 fun HomeScreen () {
     val database = GetDatabase()
 
-
     val currentMonth = getFirstOfCurrentMonth()
 
     var totalAmount by remember { mutableDoubleStateOf(0.0) }
+    var categories by remember { mutableStateOf(listOf("")) }
     LaunchedEffect(Unit) {
-        val amountFromDb = withContext(Dispatchers.IO) {
-            database.expenseDao().getTotalAmountForMonth(currentMonth) ?: 0.0
+        try {
+            val amountFromDb = withContext(Dispatchers.IO) {
+                database.expenseDao().getTotalAmountForMonth(currentMonth) ?: 0.0
+            }
+            totalAmount = amountFromDb
+
+            val categoriesFromDb = withContext(Dispatchers.IO) {
+                database.settingsDao().getSettings()
+            }
+            val categoryString = categoriesFromDb.first().category
+            categories = categoryString.split(",").toList()
         }
-        totalAmount = amountFromDb
+        catch(e: Exception) {
+            println(e)
+        }
     }
 
     var purchaseAmount by remember { mutableStateOf("") }

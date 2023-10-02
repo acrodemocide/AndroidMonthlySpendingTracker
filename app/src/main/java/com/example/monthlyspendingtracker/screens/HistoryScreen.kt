@@ -54,11 +54,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.room.Room
 import com.example.monthlyspendingtracker.DeleteDialog
 import com.example.monthlyspendingtracker.R
-import com.example.monthlyspendingtracker.categories
-import com.example.monthlyspendingtracker.data.AppDatabase
 import com.example.monthlyspendingtracker.data.ExpenseEntity
 import com.example.monthlyspendingtracker.data.GetDatabase
 import kotlinx.coroutines.CoroutineScope
@@ -71,6 +68,8 @@ import java.io.OutputStreamWriter
 import java.text.NumberFormat
 import java.util.Currency
 
+//import com.example.monthlyspendingtracker.categories
+
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -81,12 +80,24 @@ fun HistoryScreen () {
     val startOfCurrentMonth = getFirstOfCurrentMonth()
 
     var expenses: List<ExpenseEntity> by remember { mutableStateOf(emptyList<ExpenseEntity>()) }
+    var categories by remember { mutableStateOf(listOf("")) }
 
     LaunchedEffect(Unit) {
-        val dbExpenses = withContext(Dispatchers.IO) {
-            database.expenseDao().getExpensesForMonth(startOfCurrentMonth) ?: emptyList()
+        try {
+            val dbExpenses = withContext(Dispatchers.IO) {
+                database.expenseDao().getExpensesForMonth(startOfCurrentMonth) ?: emptyList()
+            }
+            expenses = dbExpenses
+
+            val categoriesFromDb = withContext(Dispatchers.IO) {
+                database.settingsDao().getSettings()
+            }
+            val categoryString = categoriesFromDb.first().category
+            categories = categoryString.split(",").toList()
         }
-        expenses = dbExpenses
+        catch (e: Exception) {
+            println(e)
+        }
     }
 
     var purchaseAmount by remember { mutableStateOf("") }
